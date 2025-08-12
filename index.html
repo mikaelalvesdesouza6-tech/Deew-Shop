@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Deew Shop</title>
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
+  <meta name="description" content="Deew Shop — Pastelaria Delivery. Cadastre-se, salve seu endereço e faça seu pedido pelo WhatsApp.">
+  <style>
+    :root{--bg:#0f172a;--card:#1f2937;--accent:#16a34a;--muted:#9ca3af;}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
+    body{margin:0;background:linear-gradient(180deg,#071029 0%, #081424 100%);color:#e6eef8}
+    header{display:flex;align-items:center;gap:12px;padding:14px;background:#0b1220;position:sticky;top:0;z-index:10}
+    .brand{font-weight:800;font-size:20px}
+    main{padding:12px;max-width:980px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:12px}
+    .card{background:var(--card);padding:12px;border-radius:14px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    .menu-list{display:grid;gap:10px}
+    .menu-item{display:flex;gap:12px;align-items:center}
+    .menu-item img{width:84px;height:64px;object-fit:cover;border-radius:8px}
+    .mi-body{flex:1}
+    .price{font-weight:700}
+    button.btn{background:var(--accent);border:none;padding:8px 10px;border-radius:10px;color:#032;cursor:pointer}
+    .small{font-size:13px;color:var(--muted)}
+    .cart-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .actions{display:flex;gap:8px}
+    input,textarea{width:100%;padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.06);color:inherit}
+    footer{padding:12px;text-align:center;color:var(--muted);font-size:13px}
+    @media(max-width:880px){.grid{grid-template-columns:1fr}.card{margin-bottom:12px}}
+  </style>
+</head>
+<body>
+  <header>
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="0" y="0" width="44" height="44" rx="10" fill="white" fill-opacity="0.06" />
+      <g transform="translate(4,6)">
+        <circle cx="6" cy="6" r="5" fill="#c7f0ff" opacity="0.95" />
+        <path d="M18 10c3-6 8-6 10-1c1 4-3 7-6 7c-3 0-5-3-4-6Z" fill="#9be89d"/>
+        <rect x="30" y="3" width="6" height="6" rx="1" fill="#c28a5a" />
+      </g>
+    </svg>
+    <div>
+      <div class="brand">Deew Shop</div>
+      <div class="small">Pastelaria — Delivery</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card">
+        <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
+          <div>
+            <h2 style="margin:6px 0 4px">Cardápio</h2>
+            <div class="small">Selecione seus pastéis</div>
+          </div>
+          <button class="btn" onclick="openSettings()">⚙️ Configurações</button>
+        </div>
+        <div style="margin-top:12px" id="menu" class="menu-list"></div>
+      </section>
+
+      <aside class="card">
+        <h3>Seu Pedido</h3>
+        <div id="cart" style="min-height:120px"></div>
+        <div style="margin-top:10px">
+          <div class="small">Cliente salvo:</div>
+          <div id="client-summary" class="small"></div>
+          <button class="btn" style="margin-top:8px" onclick="ensureClient()">Fazer checkout</button>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:12px">
+      <h3>Cadastro / Endereço</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end">
+        <div>
+          <label class="small">Nome</label>
+          <input id="name" placeholder="Seu nome" />
+        </div>
+        <div>
+          <label class="small">Telefone</label>
+          <input id="phone" placeholder="(DDD) 9xxxx-xxxx" />
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <label class="small">Endereço</label>
+        <textarea id="address" rows="2" placeholder="Rua, número, bairro, referência"></textarea>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn" onclick="saveClient()">Salvar Cliente</button>
+        <button onclick="clearClient()" style="padding:8px 10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.12);color:inherit">Limpar</button>
+      </div>
+    </section>
+
+    <section id="settingsPanel" class="card" style="display:none; margin-top:12px">
+      <h3>Configurações</h3>
+      <div class="small">Essas informações são da Deew Shop.</div>
+      <label class="small">Número do WhatsApp do estabelecimento (formato internacional ex: 5511988289671)</label>
+      <input id="merchantPhone" value="5511988289671" />
+      <label class="small" style="margin-top:8px">Chave Pix (e-mail/CPF/CNPJ/chave aleatória)</label>
+      <input id="pixKey" value="ad58bf60-dcbb-4670-979c-2ced8b857d28" />
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input id="pixNote" placeholder="Ex: Pagar o total do pedido" />
+        <button class="btn" onclick="copyPix()">Copiar chave</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" onclick="saveSettings()">Salvar</button>
+        <button onclick="closeSettings()" style="padding:8px 10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.12);color:inherit">Fechar</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © Deew Shop — PWA
+    <script>
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').catch(console.warn);
+        });
+      }
+    </script>
+  </footer>
+
+  <script>
+  const MENU = [
+    { id: 'p1', name: 'Pastel Prensado', price: 50, img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%230b1220"/><text x="50%" y="50%" fill="%23e6eef8" font-size="28" font-family="Arial" text-anchor="middle">Pastel Prensado</text></svg>' },
+    { id: 'p2', name: 'Pastel de flor', price: 35, img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%2314212a"/><text x="50%" y="50%" fill="%23e6eef8" font-size="28" font-family="Arial" text-anchor="middle">Pastel de flor</text></svg>' },
+    { id: 'p3', name: 'Pastel de ICE', price: 90, img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%23091a2a"/><text x="50%" y="50%" fill="%23e6eef8" font-size="28" font-family="Arial" text-anchor="middle">Pastel de ICE</text></svg>' },
+    { id: 'p4', name: 'Pastel de Dry', price: 45, img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%2320171e"/><text x="50%" y="50%" fill="%23e6eef8" font-size="28" font-family="Arial" text-anchor="middle">Pastel de Dry</text></svg>' }
+  ];
+
+  function loadClient(){
+    const c = JSON.parse(localStorage.getItem('deew_client')||'null');
+    if(c){document.getElementById('name').value=c.name||'';
+      document.getElementById('phone').value=c.phone||'';
+      document.getElementById('address').value=c.address||'';}
+    refreshClientSummary();
+  }
+  function saveClient(){
+    const c={name:document.getElementById('name').value.trim(),phone:document.getElementById('phone').value.trim(),address:document.getElementById('address').value.trim()};
+    if(!c.name || !c.phone || !c.address){alert('Preencha nome, telefone e endereço.');return}
+    localStorage.setItem('deew_client',JSON.stringify(c));
+    refreshClientSummary();
+    alert('Cliente salvo!');
+  }
+  function clearClient(){localStorage.removeItem('deew_client');document.getElementById('name').value='';document.getElementById('phone').value='';document.getElementById('address').value='';refreshClientSummary();}
+  function refreshClientSummary(){
+    const c = JSON.parse(localStorage.getItem('deew_client')||'null');
+    const el=document.getElementById('client-summary');
+    el.innerText = c ? `${c.name} • ${c.phone} • ${c.address}` : 'Nenhum cliente salvo.';
+  }
+
+  function loadSettings(){
+    const s=JSON.parse(localStorage.getItem('deew_settings')||'{}');
+    document.getElementById('merchantPhone').value=s.merchantPhone||document.getElementById('merchantPhone').value;
+    document.getElementById('pixKey').value=s.pixKey||document.getElementById('pixKey').value;
+    document.getElementById('pixNote').value=s.pixNote||'';
+  }
+  function saveSettings(){
+    const s={merchantPhone:document.getElementById('merchantPhone').value.trim(),pixKey:document.getElementById('pixKey').value.trim(),pixNote:document.getElementById('pixNote').value.trim()};
+    localStorage.setItem('deew_settings',JSON.stringify(s));
+    alert('Configurações salvas.');
+  }
+  function openSettings(){document.getElementById('settingsPanel').style.display='block';}
+  function closeSettings(){document.getElementById('settingsPanel').style.display='none';}
+  function copyPix(){const k=document.getElementById('pixKey').value.trim(); if(!k){alert('Defina a chave Pix.');return} navigator.clipboard.writeText(k).then(()=>alert('Chave Pix copiada!'))}
+
+  let CART = JSON.parse(localStorage.getItem('deew_cart')||'[]');
+  function saveCart(){localStorage.setItem('deew_cart',JSON.stringify(CART));renderCart();}
+  function addToCart(id){
+    const item = MENU.find(m=>m.id===id); if(!item) return;
+    const ex = CART.find(c=>c.id===id); if(ex) ex.qty++; else CART.push({id:item.id,name:item.name,price:item.price,qty:1});
+    saveCart();
+  }
+  function removeFromCart(id){CART = CART.filter(c=>c.id!==id); saveCart();}
+  function changeQty(id,delta){const it=CART.find(c=>c.id===id); if(!it) return; it.qty+=delta; if(it.qty<1) removeFromCart(id); saveCart();}
+  function renderCart(){
+    const el=document.getElementById('cart'); el.innerHTML='';
+    if(CART.length===0){el.innerHTML='<div class="small">Carrinho vazio</div>'; return}
+    let total=0;
+    CART.forEach(ci=>{
+      total += ci.price*ci.qty;
+      const div=document.createElement('div');div.className='cart-item';
+      div.innerHTML = `<div><div style="font-weight:700">${ci.name}</div><div class="small">R$ ${ci.price.toFixed(2)} x ${ci.qty}</div></div><div class="actions"><button onclick="changeQty('${ci.id}',-1)">-</button><button onclick="changeQty('${ci.id}',1)">+</button><button onclick="removeFromCart('${ci.id}')">✖</button></div>`;
+      el.appendChild(div);
+    });
+    const totalDiv=document.createElement('div');totalDiv.style.marginTop='8px';totalDiv.innerHTML=`<div style="display:flex;justify-content:space-between;font-weight:700">Total <span>R$ ${total.toFixed(2)}</span></div>`;
+    el.appendChild(totalDiv);
+  }
+
+  function ensureClient(){
+    const client = JSON.parse(localStorage.getItem('deew_client')||'null');
+    if(!client){ alert('Salve seus dados antes do checkout.'); return; }
+    if(CART.length===0){alert('Carrinho vazio!');return}
+    const settings = JSON.parse(localStorage.getItem('deew_settings')||'{}');
+    const hasNumber = (settings.merchantPhone||document.getElementById('merchantPhone').value).trim();
+    if(!hasNumber){ openSettings(); return }
+    openWhatsAppOrder();
+  }
+  function openWhatsAppOrder(){
+    const client = JSON.parse(localStorage.getItem('deew_client'));
+    const s = JSON.parse(localStorage.getItem('deew_settings')||'{}');
+    const wa = (s.merchantPhone||document.getElementById('merchantPhone').value).replace(/[^0-9]/g,'');
+    let total=0; let lines=[];
+    CART.forEach(ci=>{ total += ci.price*ci.qty; lines.push(`${ci.qty}x ${ci.name} — R$ ${(ci.price*ci.qty).toFixed(2)}`); });
+    const body = `📦 *Pedido Deew Shop*\n\n*Cliente:* ${client.name} - ${client.phone}\n*Endereço:* ${client.address}\n\n*Itens*:\n${lines.join('\n')}\n\n*Total:* R$ ${total.toFixed(2)}\n\n*Pagamento via Pix:* ${s.pixKey||document.getElementById('pixKey').value}\n\nPor favor confirmar recebimento.`;
+    const waUrl = `https://wa.me/${wa}?text=${encodeURIComponent(body)}`;
+    window.open(waUrl,'_blank');
+  }
+
+  function renderMenu(){
+    const m=document.getElementById('menu');
+    MENU.forEach(item=>{
+      const div=document.createElement('div');div.className='menu-item card';
+      div.innerHTML = `<img src="${item.img}" alt="${item.name}" /><div class="mi-body"><div style="display:flex;justify-content:space-between"><div><div style="font-weight:700">${item.name}</div><div class="small">Descrição breve</div></div><div class="price">R$ ${item.price.toFixed(2)}</div></div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn" onclick="addToCart('${item.id}')">Adicionar</button></div></div>`;
+      m.appendChild(div);
+    });
+  }
+
+  // boot
+  renderMenu(); renderCart(); loadClient(); loadSettings();
+  </script>
+</body>
+</html>

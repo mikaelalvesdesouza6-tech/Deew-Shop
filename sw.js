@@ -1,7 +1,7 @@
 
 self.addEventListener('install', e => {
   self.skipWaiting();
-  e.waitUntil(caches.open('deew-shop-v2').then(cache => cache.addAll([
+  e.waitUntil(caches.open('deew-shop-v3').then(cache => cache.addAll([
     './',
     './index.html',
     './manifest.json',

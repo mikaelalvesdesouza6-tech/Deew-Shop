@@ -18,7 +18,7 @@
     .card{background:var(--card);padding:12px;border-radius:14px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
     .menu-list{display:grid;gap:10px}
     .menu-item{display:flex;gap:12px;align-items:center}
-    .menu-item img{width:84px;height:64px;object-fit:cover;border-radius:8px}
+    .imgbox{width:84px;height:64px;border-radius:8px;background:linear-gradient(135deg, #0ea5a1 0%, #2563eb 100%);flex:0 0 auto}
     .mi-body{flex:1}
     .price{font-weight:700}
     button.btn{background:var(--accent);border:none;padding:8px 10px;border-radius:10px;color:#032;cursor:pointer}
@@ -95,9 +95,9 @@
     <section id="settingsPanel" class="card" style="display:none; margin-top:12px">
       <h3>Configurações</h3>
       <div class="small">Essas informações são da Deew Shop.</div>
-      <label class="small">Número do WhatsApp do estabelecimento (formato internacional ex: 5511988289671)</label>
+      <label class="small">Número do WhatsApp do estabelecimento</label>
       <input id="merchantPhone" value="5511988289671" />
-      <label class="small" style="margin-top:8px">Chave Pix (e-mail/CPF/CNPJ/chave aleatória)</label>
+      <label class="small" style="margin-top:8px">Chave Pix</label>
       <input id="pixKey" value="ad58bf60-dcbb-4670-979c-2ced8b857d28" />
       <div style="display:flex;gap:8px;margin-top:8px">
         <input id="pixNote" placeholder="Ex: Pagar o total do pedido" />
@@ -113,7 +113,6 @@
   <footer>
     © Deew Shop — PWA
     <script>
-      // Register service worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('sw.js').catch(console.warn);
@@ -124,10 +123,10 @@
 
   <script>
   const MENU = [
-    { id: 'p1', name: 'Pastel Prensado', price: 50, img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%230b1220"/><text x="50%" y="50%" fill="%23e6eef8" font-size="28" font-family="Arial" text-anchor="middle">Pastel Prensado</text></svg>' },
-    { id: 'p2', name: 'Pastel de flor', price: 35, img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%2314212a"/><text x="50%" y="50%" fill="%23e6eef8" font-size="28" font-family="Arial" text-anchor="middle">Pastel de flor</text></svg>' },
-    { id: 'p3', name: 'Pastel de ICE', price: 90, img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%23091a2a"/><text x="50%" y="50%" fill="%23e6eef8" font-size="28" font-family="Arial" text-anchor="middle">Pastel de ICE</text></svg>' },
-    { id: 'p4', name: 'Pastel de Dry', price: 45, img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%2320171e"/><text x="50%" y="50%" fill="%23e6eef8" font-size="28" font-family="Arial" text-anchor="middle">Pastel de Dry</text></svg>' }
+    { id: 'p1', name: 'Pastel Prensado', price: 50 },
+    { id: 'p2', name: 'Pastel de flor', price: 35 },
+    { id: 'p3', name: 'Pastel de ICE', price: 90 },
+    { id: 'p4', name: 'Pastel de Dry', price: 45 }
   ];
 
   function loadClient(){
@@ -213,12 +212,11 @@
     const m=document.getElementById('menu');
     MENU.forEach(item=>{
       const div=document.createElement('div');div.className='menu-item card';
-      div.innerHTML = `<img src="${item.img}" alt="${item.name}" /><div class="mi-body"><div style="display:flex;justify-content:space-between"><div><div style="font-weight:700">${item.name}</div><div class="small">Descrição breve</div></div><div class="price">R$ ${item.price.toFixed(2)}</div></div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn" onclick="addToCart('${item.id}')">Adicionar</button></div></div>`;
+      div.innerHTML = `<div class="imgbox" aria-hidden="true"></div><div class="mi-body"><div style="display:flex;justify-content:space-between"><div><div style="font-weight:700">${item.name}</div><div class="small">Descrição breve</div></div><div class="price">R$ ${item.price.toFixed(2)}</div></div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn" onclick="addToCart('${item.id}')">Adicionar</button></div></div>`;
       m.appendChild(div);
     });
   }
 
-  // boot
   renderMenu(); renderCart(); loadClient(); loadSettings();
   </script>
 </body>
